@@ -6,24 +6,34 @@ import train_reg
 
 canvas_size = (-10, 10)
 n_test_point = 20
-n_vis_point = 300
+n_vis_point = 100
 T = 10
 
 
 def draw():
     new_data = synthetic.xsinx(n_samples=n_test_point)
 
-    net = train_reg.train_net(new_data)
-    x, y_mean, y_std = get_mean(net)
-
     fig, ax = plt.subplots(1)
-    #plt.figure(figsize=(8,4))
-    ax.scatter(new_data.train.X, new_data.train.Y)
-    ax.plot(x,y_mean) 
-    ax.fill_between(x, y_mean+y_std, y_mean-y_std, facecolor='blue', alpha=0.5)
-    ax.fill_between(x, y_mean+2*y_std, y_mean-2*y_std, facecolor='blue', alpha=0.25)
-    plt.show()
+    net = train_reg.train_net(new_data, max_epoch=1)
+    x, y_mean, y_std = get_mean(net)
+    lines = ax.plot(x,y_mean) 
 
+    while True:
+        # update data to be plotted
+        net = train_reg.train_net(new_data, max_epoch=1, retrain=net)
+        x, y_mean, y_std = get_mean(net)
+
+	# delete the previous data on the plot
+        for coll in (ax.collections):
+            ax.collections.remove(coll)
+	# Update the plot
+        lines[0].set_data(x, y_mean)
+        ax.set_xlim([-10, 10])
+        ax.set_ylim([-15, 5])
+        ax.scatter(new_data.train.X, new_data.train.Y)
+        for i in range(2):
+            ax.fill_between(x, y_mean+((i+1))*y_std, y_mean-((i+1))*y_std, facecolor='blue', alpha=0.125*(i+1))
+        plt.pause(.001)
     
 def test():
     new_data = synthetic.xsinx(n_samples=n_test_point)
