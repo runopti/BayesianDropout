@@ -8,17 +8,19 @@ from models.mlp_reg import MLP, Config
 from utils.progress import Progress
 import pickle 
 
-def train_net(synthetic_data):
+def train_net(synthetic_data, max_epoch, retrain=None):
     # load data
     ## we can access to raw data like this:
     ## x = synthetic_data.train.X;  images.shape = []
     ## y = synthetic_data.train.Y; each label is a probability distribution.
     
-    max_epoch = 500
-    #max_epoch = 500
     with tf.Graph().as_default():
         config = Config()
-        model = MLP(config)
+        
+        if retrain==None:
+            model = MLP(config)
+        else:
+            model = retrain
         tf.get_default_graph().finalize() 
 
         progress = Progress()
