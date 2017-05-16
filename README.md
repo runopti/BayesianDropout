@@ -11,4 +11,4 @@ Working in progress.
 python main.py
 ```
 
-will an animation that depicts the uncertainty estimate of Dropout NN.
+will play an animation that depicts the uncertainty estimate of Dropout NN.
